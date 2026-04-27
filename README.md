@@ -111,4 +111,4 @@ A Secure User Interface for Pre-Clinical Evaluation of Artificial Intelligence i
 
 ## License
 
-This project is released for academic and research purposes.
+This project is released for academic and research purposes under the [MIT License](LICENSE).
