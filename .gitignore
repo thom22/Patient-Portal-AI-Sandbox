@@ -1,6 +1,7 @@
 # Environment & secrets
 .env
 *.env.local
+.venv
 
 # Python
 __pycache__/
@@ -25,3 +26,5 @@ env/
 
 # Saved scenarios (user-generated data)
 saved_scenarios/*.json
+check_environment.py
+
