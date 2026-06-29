@@ -602,6 +602,8 @@ class DeIdentificationEngine:
         """De-identify a single text string."""
         if not text:
             return text, []
+        # Reset per-message replacement map so placeholders don't persist across messages
+        self.replacer.replacement_map = {et.value: {} for et in EntityType}
         entities = self.detector.detect_entities(text)
         entities_rev = sorted(entities, key=lambda e: e.start_pos, reverse=True)
         result = text

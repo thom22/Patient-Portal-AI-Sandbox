@@ -323,6 +323,42 @@ class BaseAIUseCase(ABC):
 
 
 class AuthorshipDetection(BaseAIUseCase):
+    # One example (caregiver only) — matches the appendix and manuscript description
+    ONE_SHOT_PROMPT_TEMPLATE = (
+        "You are a clinical assistant. Classify whether the following message "
+        "is sent by a patient or a care partner.\n\n"
+        "Examples:\n"
+        "message: 'my father is not doing well and i'd like an update on his meds.'\n"
+        "output: 1\n\n"
+        "Instructions:\n"
+        "- Output 0 if the message is from the patient themselves\n"
+        "- Output 1 if the message is from a caretaker/care partner "
+        "(family member, friend, etc.)\n"
+        "- Output 2 if it's ambiguous and you cannot determine with confidence\n\n"
+        "message: '{message}'\n"
+        "output:"
+    )
+
+    # Three examples (caregiver, patient, ambiguous) — original few-shot version
+    FEW_SHOT_PROMPT_TEMPLATE = (
+        "You are a clinical assistant. Classify whether the following message "
+        "is sent by a patient or a care partner.\n\n"
+        "Examples:\n"
+        "message: 'my father is not doing well and i'd like an update on his meds.'\n"
+        "output: 1\n\n"
+        "message: 'i forgot to take my medication yesterday.'\n"
+        "output: 0\n\n"
+        "message: 'update on condition'\n"
+        "output: 2\n\n"
+        "Instructions:\n"
+        "- Output 0 if the message is from the patient themselves\n"
+        "- Output 1 if the message is from a caretaker/care partner "
+        "(family member, friend, etc.)\n"
+        "- Output 2 if it's ambiguous and you cannot determine with confidence\n\n"
+        "message: '{message}'\n"
+        "output:"
+    )
+
     @property
     def use_case_type(self):
         return AIUseCaseType.AUTHORSHIP_DETECTION
@@ -333,24 +369,7 @@ class AuthorshipDetection(BaseAIUseCase):
 
     @property
     def prompt_template(self) -> str:
-        return (
-            "You are a clinical assistant. Classify whether the following message "
-            "is sent by a patient or a care partner.\n\n"
-            "Examples:\n"
-            "message: 'my father is not doing well and i'd like an update on his meds.'\n"
-            "output: 1\n\n"
-            "message: 'i forgot to take my medication yesterday.'\n"
-            "output: 0\n\n"
-            "message: 'update on condition'\n"
-            "output: 2\n\n"
-            "Instructions:\n"
-            "- Output 0 if the message is from the patient themselves\n"
-            "- Output 1 if the message is from a caretaker/care partner "
-            "(family member, friend, etc.)\n"
-            "- Output 2 if it's ambiguous and you cannot determine with confidence\n\n"
-            "message: '{message}'\n"
-            "output:"
-        )
+        return self.ONE_SHOT_PROMPT_TEMPLATE
 
     def simulate_response(self, msg: Dict[str, Any]) -> str:
         text = msg.get("email_text", "").lower()
@@ -390,12 +409,8 @@ class AuthorshipDetection(BaseAIUseCase):
         return "2"
 
     def parse_response(self, response: str) -> Dict[str, Any]:
-        try:
-            val = int(response.strip())
-            if val not in (0, 1, 2):
-                val = 2
-        except ValueError:
-            val = 2
+        match = re.search(r'\b[012]\b', response)
+        val = int(match.group()) if match else 2
         labels = {0: "patient", 1: "caretaker", 2: "ambiguous"}
         return {"classification": val, "label": labels[val]}
 
@@ -489,11 +504,8 @@ class CriticalityAnalysis(BaseAIUseCase):
         return "3"
 
     def parse_response(self, response: str) -> Dict[str, Any]:
-        try:
-            score = int(response.strip())
-            score = max(1, min(5, score))
-        except ValueError:
-            score = 3
+        match = re.search(r'\b[1-5]\b', response)
+        score = int(match.group()) if match else 3
         labels = {
             1: "Routine",
             2: "Low Priority",
@@ -586,12 +598,8 @@ class MessageCategorization(BaseAIUseCase):
         return "1"
 
     def parse_response(self, response: str) -> Dict[str, Any]:
-        try:
-            val = int(response.strip())
-            if val not in (0, 1):
-                val = 1  # Default to clinical for safety
-        except ValueError:
-            val = 1
+        match = re.search(r'\b[01]\b', response)
+        val = int(match.group()) if match else 1  # Default to clinical for safety
         cat = {0: "Non-Clinical", 1: "Clinical"}
         handler = {0: "Administrative Staff", 1: "Healthcare Provider"}
         return {
