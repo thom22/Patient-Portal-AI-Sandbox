@@ -1,7 +1,7 @@
 # Secure AI Sandbox for Patient Portal Messaging
 
 > **Companion code for:**  
-> Gleason KT, Kidu T, Babu V, Hasselfled B, & Wolff JL. *A Secure User Interface for Pre-Clinical Evaluation of Artificial Intelligence in Patient-Portal Message Management: A Tutorial.*
+> Gleason KT, Kidu T, Babu V, Hasselfeld B, & Wolff JL. *A Secure User Interface for Pre-Clinical Evaluation of Artificial Intelligence in Patient-Portal Message Management: A Tutorial.*
 
 A secure, interactive platform for testing AI use cases on patient portal messages with built-in de-identification pipeline. The sandbox enables clinical and technical teams to experiment with LLM-powered workflows on de-identified data **before** clinical integration.
 
@@ -9,7 +9,7 @@ A secure, interactive platform for testing AI use cases on patient portal messag
 
 ## Features
 
-- **De-Identification Pipeline** — Multi-method PHI detection (spaCy NER, scispaCy biomedical NER, regex) with medication preservation and synthetic replacement  
+- **De-Identification Pipeline** — Multi-method PHI detection (spaCy NER, scispaCy biomedical NER, regex) with medication preservation and synthetic replacement. **To replicate the de-identification accuracy reported in the manuscript, set `USE_SPACY=true` and `USE_SCISPACY=true` in your `.env` file** (disabled by default to minimize setup requirements).  
 - **4 AI Use Cases** — Authorship detection, criticality flagging, message categorization, and draft response generation  
 - **Prompt Studio** — View, edit, and experiment with prompt templates at runtime  
 - **Dual Mode** — Runs in simulation (mock AI, zero setup) or live (Azure OpenAI)  
@@ -103,7 +103,7 @@ Switch back to simulation mode anytime by changing `SMARTREP_MODE=simulation`.
 If you use this software in your research, please cite:
 
 ```
-Gleason, K.T., Kidu, T., Babu, V., Hasselfled, B., & Wolff, J.L.
+Gleason, K.T., Kidu, T., Babu, V., Hasselfeld, B., & Wolff, J.L.
 A Secure User Interface for Pre-Clinical Evaluation of Artificial Intelligence in Patient-Portal Message Management: A Tutorial.
 ```
 

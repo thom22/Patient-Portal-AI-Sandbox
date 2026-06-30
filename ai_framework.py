@@ -636,7 +636,7 @@ class ResponseGeneration(BaseAIUseCase):
             "- Acknowledge their concerns\n"
             "- Provide helpful information when appropriate\n"
             "- If medical advice is needed, suggest scheduling an appointment\n"
-            "- Keep the response very short, concise, clear and short\n\n"
+            "- Keep the response very short and concise\n\n"
             'Patient message: "{message}"\n\n'
             "Response:"
         )

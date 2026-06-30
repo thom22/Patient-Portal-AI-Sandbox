@@ -866,6 +866,27 @@ def page_prompts():
         ):
             st.caption(meta["desc"])
 
+            # Authorship Detection: quick selector for one-shot vs few-shot
+            if uc_type == AIUseCaseType.AUTHORSHIP_DETECTION:
+                from ai_framework import AuthorshipDetection as _AD
+                strategy = st.selectbox(
+                    "Prompt strategy",
+                    ["one_shot", "few_shot"],
+                    index=0,
+                    key="authorship_strategy",
+                    help="one_shot: single caregiver example (manuscript default). "
+                         "few_shot: three examples (caregiver, patient, ambiguous).",
+                )
+                selected_template = (
+                    _AD.ONE_SHOT_PROMPT_TEMPLATE
+                    if strategy == "one_shot"
+                    else _AD.FEW_SHOT_PROMPT_TEMPLATE
+                )
+                if selected_template != current_prompt:
+                    st.session_state.custom_prompts[uc_type.value] = selected_template
+                    case.set_custom_prompt(selected_template)
+                    current_prompt = selected_template
+
             # Show prompt in editable text area
             edited = st.text_area(
                 f"Prompt template for {meta['title']}",
